@@ -5,13 +5,13 @@ import { DragDropGrid } from 'react-native-drag-drop-grid-library';
 import Unsplash from 'unsplash-js';
 
 const dimensions = Dimensions.get('window')
-const width = dimensions.width * .9, height = dimensions.height * .8
+const screenWidth = dimensions.width * .9, screenHeight = dimensions.height * .8
 const w1 = 100, h1 = 100
 
 export default function App() {
   const [gridItems, setGridItems] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-  let mTop = {
+  const mTop = {
     0: 0,
     1: 0,
     2: 0,
@@ -22,7 +22,7 @@ export default function App() {
     7: -2,
     8: -2,
   }
-  let mLeft = {
+  const mLeft = {
     0: 0,
     1: -1,
     2: -2,
@@ -34,8 +34,11 @@ export default function App() {
     8: -2,
   }
 
+  // my unsplash info, we have max 50 requests/hour
   // const unsplash = new Unsplash({ accessKey: 'c840d6aaf8c9985c3969fbb9d53349c39e98a01e389124691e5450e6d02472d3' })
+  // unsplash API: https://github.com/unsplash/unsplash-js
 
+  // this is the photo i've been using to get it working, its url is below - just saving it so we don't have to send a request each time
   // unsplash.photos.getPhoto("mtNweauBsMQ")
   // .then(resp => resp.json())
   // .then(json => {
@@ -83,30 +86,22 @@ export default function App() {
 
   let arr = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8])
 
-  // C
-  // ax - sum1
-  // dx - sum2
-  // di - sum3
-  // cx - sum4
-  // rsi - A
-
-  // rbx, r11, rdx, rax
-
-  // S
-  // rdi - size
-  // rsi - A
-  // rdx - 
-  // rcx - i
-  // r8 - 
-  // r9 - 
-
-  // caller saved:
-  // r10-r11
-
-  // callee saved:
-  // rbp
-  // rbx
-  // r12-r15
+  // a few things to fix/add:
+  // - need to get dimensions right on tiles so the images fit together well
+  // - will improve styling of it
+  // - add a timer (like 30 seconds maybe)
+  // - lock puzzle after time expires/you solve it
+  // - the first time it loads on iOS simulator the grid is up at the top of the screen,
+  //   then when you click it centers. this doesn't happen on my phone though
+  // - firebase stuff
+  // - sign in
+  // - menus etc.
+  // - shake to shuffle tiles
+  
+  // the tiles will be randomized each time you start. each time you drag and drop
+  // a tile the new order will be console logged, which you can use to help solve
+  // the puzzle since the photo is not ideal for it. when you solve the puzzle the
+  // background should turn green
 
   return (
     <View style={[styles.container, solved() ? {backgroundColor: 'green'} : {backgroundColor: 'red'}]}>
@@ -140,31 +135,21 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-    // flexDirection: 'row',
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   grid: {
-    // width: '100%',
-    // height: '90%',
     width: '100%',
-    height: '60%',
-    marginTop: '40%',
-    // marginLeft: '5%',
-    // borderWidth: 1,
-    // borderColor: 'blue',
+    height: '100%',
   },
   block: {
     width: '100%',
     height: '100%',
     overflow: 'hidden',
-    // borderWidth: 1,
-    // borderColor: 'green',
-    padding: 0,
   },
   photo: {
-    width: width,
-    height: height,
-    padding: 0,
+    width: screenWidth,
+    height: screenHeight,
   }
 })
