@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 export default function HomeScreen(props) {
@@ -12,21 +13,43 @@ export default function HomeScreen(props) {
   // })
 
   return (
-    <View style={styles.container}>
-      <Text style={{fontSize: 40}}>HomeScreen</Text>
-      <Button title='Play' onPress={() => props.navigation.navigate('GameList')}/>
-      <Button title='Friends' onPress={() => props.navigation.navigate('FriendsList')}/>
-      <Button title='Back to login/create account' onPress={() => props.navigation.goBack()}/>
+    <View>
+      <LinearGradient style={styles.container}
+        colors={["#7646FF", "#FFFFFF"]}>
+        <Text style={{ fontSize: 100, padding: 10, fontFamily: "Hiragino Sans", color: "white" }}>Tilez</Text>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('GameList')}>
+          <Text style={styles.text}>Play</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('FriendsList')}>
+          <Text style={styles.text}>Friends</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('LoginScreen')}>
+          <Text style={styles.text}>Log Out</Text>
+        </TouchableOpacity>
+      </LinearGradient>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    width: '100%',
+    width: "100%",
+    height: "100%",
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  button: {
+    width: "75%",
+    alignItems: "center",
+    paddingVertical: 15,
+    marginVertical: 10,
+    backgroundColor: "#FFF",
+    borderRadius: 7,
+  },
+  text: {
+    fontFamily: "ArialRoundedMTBold",
+    color: "black",
+    fontSize: 20,
+  }
 })

@@ -1,7 +1,30 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
+const DATA = [
+  {
+    id: "1",
+    name: 'John D.',
+  },
+  {
+    id: '2',
+    name: 'Ben H.',
+  },
+  {
+    id: '3',
+    name: 'Tom L.',
+  },
+];
+
+function Item({name}) {
+  return (
+    <View style={styles.friend}>
+      <Text style={{ fontSize: 28 }}>{name}</Text>
+    </View>
+  );
+}
 
 export default function HomeScreen(props) {
   // const [gridItems, setGridItems] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -13,8 +36,19 @@ export default function HomeScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Text style={{fontSize: 40}}>FriendsList</Text>
-      <Button title='Back home' onPress={() => props.navigation.goBack()}/>
+      <View style={styles.topContainer}>
+        <TouchableOpacity style={{ fontSize: 40, flex: 1 }} onPress={() => props.navigation.goBack()}>
+          <Text>Back</Text>
+        </TouchableOpacity>
+        <Text style={{ fontSize: 25 }}>Friends</Text>
+        <View style={{ flex: 1 }} />
+      </View>
+      <FlatList
+        style={{ width: "100%" }}
+        data={DATA}
+        renderItem={({ item }) => <Item name={item.name} />}
+        keyExtractor={item => item.id}
+      />
     </View>
   )
 }
@@ -24,7 +58,26 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    backgroundColor: "#DDD",
   },
+  topContainer: {
+    paddingVertical: 20,
+    width: "100%",
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: "#FFF"
+  },
+  friend: {
+    marginTop: 8,
+    backgroundColor: "#FFF",
+    paddingLeft: 10,
+    paddingVertical: 15,
+    flexDirection: 'row',
+    justifyContent: "flex-start",
+    alignItems: 'center',
+    width: "100%",
+  }
 })
