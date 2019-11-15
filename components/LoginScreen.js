@@ -54,12 +54,26 @@ export default function LoginScreen(props) {
     stylesheet: formStyles
   }
 
-  const handleSignIn = () => {
+  const handleSignUp = () => {
     const value = this._form.getValue();
     const email = value["email"];
     const pwd = value["password"];
 
     firebase.auth().createUserWithEmailAndPassword(email, pwd)
+      .then(() => {
+        props.navigation.navigate('LoginPopup');
+      })
+      .catch(e => {
+        console.log(e);
+      })
+    console.log('value: ', value);
+  }
+  const handleSignIn = () => {
+    const value = this._form.getValue();
+    const email = value["email"];
+    const pwd = value["password"];
+
+    firebase.auth().signInWithEmailAndPassword(email, pwd)
       .then(() => {
         props.navigation.navigate('LoginPopup');
       })
@@ -79,6 +93,7 @@ export default function LoginScreen(props) {
         options={options}
       />
       <Button title='Login' onPress={handleSignIn}/>
+      <Button title='Sign Up' onPress={handleSignUp} style={{marginTop: "10%"}}/>
     </View>
   )
 }
