@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, Dimensions, ImageEditor } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import SplashScreen from './components/SplashScreen';
 import HomeScreen from './components/HomeScreen';
 import GameScreen from './components/GameScreen';
 import LoginScreen from './components/LoginScreen';
@@ -27,6 +28,7 @@ import firebase from './firebase.js';
 
 const RootStack = createStackNavigator(
   {
+    SplashScreen: SplashScreen,
     LoginScreen: LoginScreen,
     LoginPopup: LoginPopup,
     CreateAccountPopup: CreateAccountPopup,
@@ -36,7 +38,7 @@ const RootStack = createStackNavigator(
     GameList: GameList,
   },
   {
-    initialRouteName: 'LoginScreen',
+    initialRouteName: 'SplashScreen',
     headerMode: 'none',
     navigationOptions: {
       headerVisible: false,
