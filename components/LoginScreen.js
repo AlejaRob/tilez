@@ -61,7 +61,7 @@ export default function LoginScreen(props) {
 
     firebase.auth().createUserWithEmailAndPassword(email, pwd)
       .then(() => {
-        props.navigation.navigate('LoginPopup');
+        props.navigation.navigate('HomeScreen');
       })
       .catch(e => {
         console.log(e);
@@ -75,7 +75,7 @@ export default function LoginScreen(props) {
 
     firebase.auth().signInWithEmailAndPassword(email, pwd)
       .then(() => {
-        props.navigation.navigate('LoginPopup');
+        props.navigation.navigate('HomeScreen');
       })
       .catch(e => {
         console.log(e);

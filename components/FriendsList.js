@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import Constants from 'expo-constants'
+import Constants from 'expo-constants';
 
 const DATA = [
   {
