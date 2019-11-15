@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import Constants from 'expo-constants'
 
 const DATA = [
   {
@@ -37,7 +38,7 @@ export default function HomeScreen(props) {
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <TouchableOpacity style={{ fontSize: 40, flex: 1 }} onPress={() => props.navigation.goBack()}>
+        <TouchableOpacity style={{ fontSize: 40, flex: 1 }} onPress={() => props.navigation.navigate('HomeScreen')}>
           <Text>Back</Text>
         </TouchableOpacity>
         <Text style={{ fontSize: 25 }}>Friends</Text>
@@ -57,10 +58,11 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
+    paddingTop: Constants.statusBarHeight,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: "#DDD",
+    backgroundColor: "#eee",
   },
   topContainer: {
     paddingVertical: 20,
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF"
   },
   friend: {
-    marginTop: 8,
+    marginTop: 5,
     backgroundColor: "#FFF",
     paddingLeft: 10,
     paddingVertical: 15,

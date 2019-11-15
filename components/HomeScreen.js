@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Constants from 'expo-constants';
 
 
 export default function HomeScreen(props) {
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
+    paddingTop: Constants.statusBarHeight,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
