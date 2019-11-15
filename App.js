@@ -10,6 +10,7 @@ import LoginPopup from './components/LoginPopup';
 import CreateAccountPopup from './components/CreateAccountPopup';
 import FriendsList from './components/FriendsList';
 import GameList from './components/GameList';
+import firebase from './firebase.js';
 
 // a few things to fix/add:
 // - need to get dimensions right on tiles so the images fit together well
@@ -46,6 +47,6 @@ const AppContainer = createAppContainer(RootStack)
 
 export default class App extends React.Component {
   render() {
-    return <AppContainer/>
+    return <AppContainer screenProps={{firebase: firebase}}/>
   }
 }
