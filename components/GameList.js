@@ -1,9 +1,9 @@
 /*eslint-disable*/
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
-import GameCard from './GameCard';
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import Constants from 'expo-constants';
 
 const game = {
   opponent: 'John B.',
@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
+    paddingTop: Constants.statusBarHeight,
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#E9E9E9',
@@ -65,4 +66,22 @@ const styles = StyleSheet.create({
     paddingRight: 72,
     paddingTop: 20,
   },
+  topContainer: {
+    paddingVertical: 20,
+    width: "100%",
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: "#FFF"
+  },
+  game: {
+    marginTop: 5,
+    backgroundColor: "#FFF",
+    paddingLeft: 10,
+    paddingVertical: 15,
+    flexDirection: 'row',
+    justifyContent: "flex-start",
+    alignItems: 'center',
+    width: "100%",
+  }
 })

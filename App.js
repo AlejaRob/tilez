@@ -5,6 +5,7 @@ import { StyleSheet, Text, View, Image, Dimensions, ImageEditor } from 'react-na
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import * as Font from 'expo-font';
+import SplashScreen from './components/SplashScreen';
 import HomeScreen from './components/HomeScreen';
 import GameScreen from './components/GameScreen';
 import LoginScreen from './components/LoginScreen';
@@ -13,7 +14,6 @@ import CreateAccountPopup from './components/CreateAccountPopup';
 import FriendsList from './components/FriendsList';
 import GameList from './components/GameList';
 import firebase from './firebase.js';
-import { SplashScreen } from 'expo';
 
 // a few things to fix/add:
 // - need to get dimensions right on tiles so the images fit together well
