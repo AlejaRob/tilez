@@ -1,9 +1,9 @@
 /*eslint-disable*/
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, Button, TouchableOpacity, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
+import GameCard from './GameCard';
 
 const game = {
   opponent: 'John B.',
@@ -27,7 +27,7 @@ export default function GameList(props) {
         <Text style={styles.headerText}>Active Games</Text>
       </View>
       <ScrollView>
-        <GameCard data={game}></GameCard>
+        <GameCard data={game}/>
       </ScrollView>
     </View>
   )
