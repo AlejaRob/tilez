@@ -39,7 +39,7 @@ const RootStack = createStackNavigator(
     GameList: GameList,
   },
   {
-    initialRouteName: 'LoginScreen',
+    initialRouteName: 'GameScreen', // LoginScreen
     headerMode: 'none',
     navigationOptions: {
       headerVisible: false,
