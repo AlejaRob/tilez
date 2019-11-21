@@ -1,8 +1,10 @@
+/*eslint-disable */
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Component } from 'react';
 import { StyleSheet, Text, View, Image, Dimensions, ImageEditor } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import * as Font from 'expo-font';
 import HomeScreen from './components/HomeScreen';
 import GameScreen from './components/GameScreen';
 import LoginScreen from './components/LoginScreen';
@@ -11,6 +13,7 @@ import CreateAccountPopup from './components/CreateAccountPopup';
 import FriendsList from './components/FriendsList';
 import GameList from './components/GameList';
 import firebase from './firebase.js';
+import { SplashScreen } from 'expo';
 
 // a few things to fix/add:
 // - need to get dimensions right on tiles so the images fit together well
@@ -45,8 +48,29 @@ const RootStack = createStackNavigator(
 )
 const AppContainer = createAppContainer(RootStack)
 
-export default class App extends React.Component {
+
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fontLoaded: false,
+    };
+  }
+
+  async componentWillMount() {
+    await Font.loadAsync({
+      'Pacifico': require('./assets/fonts/Pacifico-Regular.ttf'),
+    });
+
+    this.setState({ fontLoaded: true });
+  }
+  
   render() {
-    return <AppContainer screenProps={{firebase: firebase}}/>
+      if (this.state.fontLoaded) {
+        return <AppContainer screenProps={{firebase: firebase}}/>
+      }
+      else {
+        return <View></View>
+      }
   }
 }

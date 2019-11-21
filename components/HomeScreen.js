@@ -1,3 +1,5 @@
+/*eslint-disable */
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
@@ -8,16 +10,11 @@ import Constants from 'expo-constants';
 export default function HomeScreen(props) {
   // const [gridItems, setGridItems] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-  // useEffect(() => {
-  //   setGridItems(shuffleArray(gridItems))
-  //   console.log('updated')
-  // })
-
   return (
     <View>
       <LinearGradient style={styles.container}
         colors={["#7646FF", "#FFFFFF"]}>
-        <Text style={{ fontSize: 100, padding: 10, fontFamily: "Hiragino Sans", color: "white" }}>Tilez</Text>
+        <Text style={styles.title}>Tilez</Text>
         <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('GameList')}>
           <Text style={styles.text}>Play</Text>
         </TouchableOpacity>
@@ -38,20 +35,29 @@ const styles = StyleSheet.create({
     height: "100%",
     paddingTop: Constants.statusBarHeight,
     flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
   },
   button: {
-    width: "75%",
+    width: 300,
     alignItems: "center",
     paddingVertical: 15,
     marginVertical: 10,
     backgroundColor: "#FFF",
-    borderRadius: 7,
+    borderRadius: 20,
   },
   text: {
     fontFamily: "ArialRoundedMTBold",
-    color: "black",
-    fontSize: 20,
-  }
+    color: "#574980",
+    fontSize: 22,
+  },
+  title: { 
+    fontSize: 144, 
+    padding: 10, 
+    fontFamily: "Pacifico", 
+    color: "white",
+    textShadowColor: '#AAAAAA',
+    textShadowOffset: {width: -8, height: 8},
+    textShadowRadius: 1,
+    
+   }
 })
