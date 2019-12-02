@@ -9,6 +9,7 @@ export default function TakeProfilePic(props) {
     const [camType, setCamType] = useState(Camera.Constants.Type.front);
     const [cam, setCam] = useState(null);
 
+    // get camera permission when the component mounts
     useEffect(() => {
         if (!hasCamPerm) {
             (async () => {
@@ -20,31 +21,43 @@ export default function TakeProfilePic(props) {
 
     const takePic = async () => {
         if (cam !== null) {
+            // take the photo
             let photo = await cam.takePictureAsync();
             try {
                 
                 console.log(photo.uri);
+
+                // Make a directory for the profile picture
                 await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'profile/');
+
+                // copied the cached image to the filesystem
                 await FileSystem.copyAsync({
                     from: photo.uri,
                     to: FileSystem.documentDirectory + "profile/profile-pic.jpg",
                 });
+
+                // debugging to make sure it actually got there
                 let dir = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory + 'profile/');
-                
                 console.log(dir);
+
+                // go to the ImageTest screen to confirm or retake a picture
                 props.navigation.navigate('ImageTest');
             } catch (e) {
                 try {
+                    // the image already existed so we need to delete it and recopy
                     await FileSystem.deleteAsync(FileSystem.documentDirectory + 'profile/profile-pic.jpg');
                     await FileSystem.copyAsync({
                         from: photo.uri,
                         to: FileSystem.documentDirectory + "profile/profile-pic.jpg",
                     });
+
+                    // debugging to check that it worked
                     let dir = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory + 'profile/');
-                    props.navigation.navigate('HomeScreen');
                     console.log(dir);
+
                     props.navigation.navigate('ImageTest');
                 } catch (e) {
+                    // something actually went wrong, hopefully shouldn't ever get here
                     console.log(e);
                 }  
             }
@@ -52,15 +65,15 @@ export default function TakeProfilePic(props) {
     }
 
     if (hasCamPerm === null) {
-        return <View />
+        return <View /> // no perm
     } else if (!hasCamPerm) {
-        return <View><Text>No Camera Permission</Text></View>
+        return <View><Text>No Camera Permission</Text></View> // no perm
     } else {
-        console.log(hasCamPerm)
+        // we have permission, display the camera and setup event handlers
         return (
             <View style={styles.container}>
                 <Camera 
-                    style={styles.pic} //flex:1
+                    style={styles.pic} 
                     type={camType}
                     ref={ref => {
                         setCam(ref);
@@ -108,6 +121,7 @@ export default function TakeProfilePic(props) {
     }
 }
 
+// grab our styles
 const styles = StyleSheet.create({
     container: {
         height: '100%',
@@ -133,4 +147,4 @@ const styles = StyleSheet.create({
         color: "#FFF",
         fontSize: 18,
     },
-})
+});
