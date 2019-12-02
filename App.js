@@ -13,6 +13,8 @@ import LoginPopup from './components/LoginPopup';
 import CreateAccountPopup from './components/CreateAccountPopup';
 import FriendsList from './components/FriendsList';
 import GameList from './components/GameList';
+import TakeProfilePic from './components/TakeProfilePic';
+import ImageTest from './components/ImageTest';
 import firebase from './firebase.js';
 
 // a few things to fix/add:
@@ -37,9 +39,11 @@ const RootStack = createStackNavigator(
     GameScreen: GameScreen,
     FriendsList: FriendsList,
     GameList: GameList,
+    TakeProfilePic: TakeProfilePic,
+    ImageTest: ImageTest,
   },
   {
-    initialRouteName: 'GameScreen', // LoginScreen
+    initialRouteName: 'HomeScreen', // LoginScreen
     headerMode: 'none',
     navigationOptions: {
       headerVisible: false,
@@ -60,6 +64,7 @@ export default class App extends Component {
   async componentWillMount() {
     await Font.loadAsync({
       'Pacifico': require('./assets/fonts/Pacifico-Regular.ttf'),
+      'ArialRoundedMTBold': require('./assets/fonts/arlrdbd.ttf'),
     });
 
     this.setState({ fontLoaded: true });

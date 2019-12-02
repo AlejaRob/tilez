@@ -24,6 +24,9 @@ export default function HomeScreen(props) {
         <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('LoginScreen')}>
           <Text style={styles.text}>Log Out</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('TakeProfilePic')}>
+          <Text style={styles.text}>Take Profile Picture</Text>
+        </TouchableOpacity>
       </LinearGradient>
     </View>
   )
