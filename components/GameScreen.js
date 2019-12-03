@@ -6,14 +6,65 @@ import Unsplash from 'unsplash-js';
 import Constants from 'expo-constants';
 import GameTimer from './GameTimer';
 import shake from '../assets/shake.png';
-
+import { Accelerometer } from 'expo-sensors';
 const dimensions = Dimensions.get('window')
 const screenWidth = dimensions.width, screenHeight = dimensions.height
 const offset = screenWidth/3
 
 export default function GameScreen(props) {
   const [gridItems, setGridItems] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8])
-  const [gameActive, setGameActive] = useState(true)
+  const [gameActive, setGameActive] = useState(false)
+  const [accData, setAccData] = useState({
+    data: null,
+    shake: false,
+    lastUpdate: Date.now(),
+    lastShake: Date.now(),
+  });
+
+  useEffect(() => {
+    // subscribe to accelerometer data when the component mounts
+
+    const accelListener = (aD) => {
+      let currTime = Date.now();
+      if (accData.data !== null && (currTime - accData.lastUpdate > 100)) {
+        let diffTime = (currTime - accData.lastUpdate);
+        
+        let { x, y, z} = accData.data;
+        let speed = Math.abs(x + y + z - aD.x - aD.y - aD.z) / diffTime * 10000;
+        
+        if ( speed > 10 ) {
+          // we detected a shake
+          console.log('shakin the device')
+          if (Date.now() - accData.lastShake > 10000)
+            setAccData({
+              ...accData,
+              data: aD,
+              lastUpdate: Date.now(),
+              lastShake: Date.now(),
+            })
+
+            // rerender a random grid
+            setGridItems(shuffleArray(gridItems))
+        }
+        setAccData({
+          ...accData,
+          data: aD,
+          lastUpdate: currTime
+        })
+      }
+      
+      setAccData({
+        ...accData,
+        data: aD
+      });
+    }
+    Accelerometer.addListener(accelListener);
+
+    // unsubscribe when the component unmounts
+    return () => {
+      Accelerometer.removeAllListeners();
+    }
+  });
 
   const mTop = {
     0: 0,
@@ -52,7 +103,7 @@ export default function GameScreen(props) {
   // new image: https://images.unsplash.com/photo-1568486504489-9e70d75313b8?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb
 
 
-  shuffleArray = array => {
+  const shuffleArray = array => {
     var currentIndex = array.length
     var temporaryValue, randomIndex
   
@@ -68,13 +119,13 @@ export default function GameScreen(props) {
     return array
   }
 
-  getGridItemsOrder = orderObj => {
+  const getGridItemsOrder = orderObj => {
     let order = orderObj['itemOrder'].map(item => item.key)
     // console.log(order)
     return order
   }
 
-  solved = () => {
+  const solved = () => {
     let same = true
     gridItems.forEach((item, index) => {
       if(item != index) same = false
@@ -86,11 +137,11 @@ export default function GameScreen(props) {
   // let arr = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8])
   let arr = [1, 0, 2, 3, 4, 5, 6, 7, 8]
 
-  timerComplete = () => {
-    setGameActive(false)
+  const timerComplete = () => {
+    //setGameActive(false)
   }
 
-  tick = time => {
+  const tick = time => {
     if(!gameActive) console.log(time)
   }
 
@@ -118,8 +169,12 @@ export default function GameScreen(props) {
                   <Image style={[styles.photo, {marginTop: mTop[val]*offset, marginLeft: mLeft[val]*offset}]} source={require('../assets/strawberries.jpeg')}/>
                 </View>
               )
+              
             }
             )
+            .sort((a,b) => {
+              return a.key - b.key;
+            })
           }
       </DragDropGrid>
       :

@@ -23,7 +23,8 @@
     "tcomb-form-native": "^0.6.20",
     "unsplash-js": "^6.0.0",
     "expo-camera": "~7.0.0",
-    "expo-file-system": "~7.0.0"
+    "expo-file-system": "~7.0.0",
+    "expo-sensors": "~7.0.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^7.1.0"

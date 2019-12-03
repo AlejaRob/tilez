@@ -43,7 +43,7 @@ const RootStack = createStackNavigator(
     ImageTest: ImageTest,
   },
   {
-    initialRouteName: 'HomeScreen', // LoginScreen
+    initialRouteName: 'GameScreen', // LoginScreen
     headerMode: 'none',
     navigationOptions: {
       headerVisible: false,
