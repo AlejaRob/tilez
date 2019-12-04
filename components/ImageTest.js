@@ -1,8 +1,10 @@
+/* eslint-disable*/
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 
 export default function ImageTest(props) {
+    const name = props.navigation.state.params.name;
     // state var to hold the profilePic URI
     const [profilePic, setProfilePic] = useState(null);
 
@@ -10,7 +12,7 @@ export default function ImageTest(props) {
     useEffect(() => {
         (async () => {
             try {
-                const picInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'profile/profile-pic.jpg');
+                const picInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'profile/' + name + '-profile-pic.jpg');
                 if (picInfo.exists) {
                     // pic exists -> display it
                     setProfilePic(picInfo.uri);
@@ -33,7 +35,7 @@ export default function ImageTest(props) {
         return (
             <View style={styles.container}>
                 <Image source={{ uri: profilePic }} style={styles.pic} />
-                <TouchableOpacity onPress={() => props.navigation.navigate('TakeProfilePic')} style={styles.button}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('TakeProfilePic', {name: name})} style={styles.button}>
                     <Text 
                         style={styles.buttonText}
                         
@@ -41,7 +43,7 @@ export default function ImageTest(props) {
                         Retake
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => props.navigation.navigate('HomeScreen')} style={styles.button}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('HomeScreen', {name: name})} style={styles.button}>
                     <Text 
                         style={styles.buttonText}
                     >

@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import * as Permissions from 'expo-permissions';
@@ -5,6 +6,7 @@ import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 
 export default function TakeProfilePic(props) {
+    const name = props.navigation.state.params.name;
     const [hasCamPerm, setHasCamPerm] = useState(false);
     const [camType, setCamType] = useState(Camera.Constants.Type.front);
     const [cam, setCam] = useState(null);
@@ -28,12 +30,12 @@ export default function TakeProfilePic(props) {
                 console.log(photo.uri);
 
                 // Make a directory for the profile picture
-                await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'profile/');
+                await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'profile/', {intermediates: true});
 
                 // copied the cached image to the filesystem
                 await FileSystem.copyAsync({
                     from: photo.uri,
-                    to: FileSystem.documentDirectory + "profile/profile-pic.jpg",
+                    to: FileSystem.documentDirectory + 'profile/' + name + '-profile-pic.jpg',
                 });
 
                 // debugging to make sure it actually got there
@@ -41,21 +43,21 @@ export default function TakeProfilePic(props) {
                 console.log(dir);
 
                 // go to the ImageTest screen to confirm or retake a picture
-                props.navigation.navigate('ImageTest');
+                props.navigation.navigate('ImageTest', {name: name});
             } catch (e) {
                 try {
                     // the image already existed so we need to delete it and recopy
-                    await FileSystem.deleteAsync(FileSystem.documentDirectory + 'profile/profile-pic.jpg');
+                    await FileSystem.deleteAsync(FileSystem.documentDirectory + 'profile/' + name + '-profile-pic.jpg');
                     await FileSystem.copyAsync({
                         from: photo.uri,
-                        to: FileSystem.documentDirectory + "profile/profile-pic.jpg",
+                        to: FileSystem.documentDirectory + 'profile/' + name + '-profile-pic.jpg',
                     });
 
                     // debugging to check that it worked
                     let dir = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory + 'profile/');
                     console.log(dir);
 
-                    props.navigation.navigate('ImageTest');
+                    props.navigation.navigate('ImageTest', {name: name});
                 } catch (e) {
                     // something actually went wrong, hopefully shouldn't ever get here
                     console.log(e);

@@ -9,23 +9,21 @@ import Constants from 'expo-constants';
 
 export default function HomeScreen(props) {
   // const [gridItems, setGridItems] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9])
+  const id = props.navigation.state.params.id;
 
   return (
     <View>
       <LinearGradient style={styles.container}
         colors={["#7646FF", "#FFFFFF"]}>
         <Text style={styles.title}>Tilez</Text>
-        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('GameList')}>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('GameScreen')}>
           <Text style={styles.text}>Play</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('FriendsList')}>
-          <Text style={styles.text}>Friends</Text>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('ProfileScreen', {id: id})}>
+          <Text style={styles.text}>Profile</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('LoginScreen')}>
           <Text style={styles.text}>Log Out</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('TakeProfilePic')}>
-          <Text style={styles.text}>Take Profile Picture</Text>
         </TouchableOpacity>
       </LinearGradient>
     </View>

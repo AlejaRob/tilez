@@ -5,7 +5,7 @@ import { StyleSheet, Text, View, Image, Dimensions, ImageEditor } from 'react-na
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import * as Font from 'expo-font';
-import SplashScreen from './components/SplashScreen';
+import ProfileScreen from './components/ProfileScreen';
 import HomeScreen from './components/HomeScreen';
 import GameScreen from './components/GameScreen';
 import LoginScreen from './components/LoginScreen';
@@ -41,9 +41,10 @@ const RootStack = createStackNavigator(
     GameList: GameList,
     TakeProfilePic: TakeProfilePic,
     ImageTest: ImageTest,
+    ProfileScreen: ProfileScreen,
   },
   {
-    initialRouteName: 'HomeScreen', // LoginScreen
+    initialRouteName: 'LoginScreen', // LoginScreen
     headerMode: 'none',
     navigationOptions: {
       headerVisible: false,

@@ -61,7 +61,7 @@ export default function LoginPopup(props) {
 
     firebase.auth().signInWithEmailAndPassword(email, pwd)
       .then(() => {
-        props.navigation.navigate('HomeScreen');
+        props.navigation.navigate('HomeScreen', {id: email});
       })
       .catch(e => {
         console.log(e);

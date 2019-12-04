@@ -58,7 +58,7 @@ export default function CreateAccountPopup(props) {
 
     firebase.auth().createUserWithEmailAndPassword(email, pwd)
       .then(() => {
-        props.navigation.navigate('HomeScreen');
+        props.navigation.navigate('HomeScreen', {id: email});
       })
       .catch(e => {
         console.log(e);
