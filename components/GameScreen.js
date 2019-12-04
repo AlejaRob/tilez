@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, Dimensions, TouchableOpacity } from 'react-native';
@@ -15,6 +16,10 @@ const screenWidth = dimensions.width, screenHeight = dimensions.height
 const offset = screenWidth/3
 
 export default function GameScreen(props) {
+  const image = 'https://images.unsplash.com/photo-1464820453369-31d2c0b651af?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&ixid=eyJhcHBfaWQiOjEwNDk0NH0';
+  const id = props.navigation.state.params.id;
+  const name = id.substring(0, id.indexOf('@'));
+
   const shuffleArray = array => {
     var currentIndex = array.length
     var temporaryValue, randomIndex
@@ -114,6 +119,17 @@ export default function GameScreen(props) {
     }
   })
 
+  const checkHighScore = async (score) => {
+    try {
+      const value = await AsyncStorage.getItem('highScore-' + name);
+        if (value !== null && value < score) {
+          await AsyncStorage.setItem('highScore-' + name, score);
+        }
+    } catch (error) {
+      // Error saving data
+    }
+  }
+
   const getGridItemsOrder = orderObj => {
     let order = orderObj['itemOrder'].map(item => item.key)
     // console.log(order)
@@ -171,6 +187,7 @@ export default function GameScreen(props) {
     }
     else if(timerStarted && !active && timeLeft > 0) {
       const score = timeLeft*100
+      checkHighScore(score);
       let highScoreMsg = <Text style={styles.message2}>Your high score is still {highScore}.</Text>
       if(score > highScore) {
         highScoreMsg = <Text style={styles.message2}>New high score! {score}</Text>
@@ -242,7 +259,7 @@ export default function GameScreen(props) {
             gridItems.map((val, index) => {
               return (
                 <View key={val} style={styles.block}>
-                  <Image style={[styles.photo, {marginTop: mTop[val]*offset, marginLeft: mLeft[val]*offset}]} source={require('../assets/strawberries.jpeg')}/>
+                  <Image style={[styles.photo, {marginTop: mTop[val]*offset, marginLeft: mLeft[val]*offset}]} source={{uri: image}}/>
                 </View>
               )
             })
@@ -287,7 +304,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     width: '100%',
-    height: 370,
+    height: 320,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',

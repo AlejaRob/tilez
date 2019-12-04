@@ -14,6 +14,8 @@ import CreateAccountPopup from './components/CreateAccountPopup';
 import TakeProfilePic from './components/TakeProfilePic';
 import ImageTest from './components/ImageTest';
 import firebase from './firebase.js';
+import { Asset } from 'expo-asset';
+import Unsplash from 'unsplash-js';
 
 
 const RootStack = createStackNavigator(
@@ -37,13 +39,43 @@ const RootStack = createStackNavigator(
 )
 const AppContainer = createAppContainer(RootStack)
 
+function cacheImages(images) {
+  return images.map(image => {
+    if (typeof image === 'string') {
+      return Image.prefetch(image);
+    } else {
+      return Asset.fromModule(image).downloadAsync();
+    }
+  });
+}
+
+
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       fontLoaded: false,
+      image: "",
     };
+  }
+
+  async _loadAssetsAsync() {
+    let imageString;
+    const unsplash = new Unsplash({ accessKey: "f1b76d8d38686c4741bd7c0133b3b7793c9b1db3efc70073bfd59df01feaa7e5" });
+    await unsplash.photos.getPhoto("iMdsjoiftZo")
+      .then(r => r.json())
+      .then(json => {
+        imageString = json.urls.regular; // this is the string that is the http link
+        this.state.image = imageString;
+      });
+
+    console.log('image: ' + this.state.image);
+    const imageAssets = cacheImages([imageString,
+      require('./assets/strawberries.jpeg'),
+    ]);
+
+    await Promise.all([...imageAssets]);
   }
 
   async componentWillMount() {
@@ -52,12 +84,14 @@ export default class App extends Component {
       'ArialRoundedMTBold': require('./assets/fonts/arlrdbd.ttf'),
     });
 
+    this._loadAssetsAsync();
+
     this.setState({ fontLoaded: true });
   }
   
   render() {
       if (this.state.fontLoaded) {
-        return <AppContainer screenProps={{firebase: firebase}}/>
+        return <AppContainer screenProps={{firebase: firebase, image: this.state.image}}/>
       }
       else {
         return <View></View>

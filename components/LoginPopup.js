@@ -48,6 +48,7 @@ export default function LoginPopup(props) {
         error: "Please supply a valid email"
       },
       password: {
+        secureTextEntry: true,
         error: "Please supply a valid password"
       }
     },

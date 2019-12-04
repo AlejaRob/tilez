@@ -15,7 +15,7 @@ export default function HomeScreen(props) {
       <LinearGradient style={styles.container}
         colors={["#7646FF", "#FFFFFF"]}>
         <Text style={styles.title}>Tilez</Text>
-        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('GameScreen')}>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('GameScreen', {id: id})}>
           <Text style={styles.text}>Play</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('ProfileScreen', {id: id})}>
