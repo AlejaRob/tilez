@@ -1,19 +1,48 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, Button } from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { DragDropGrid } from 'react-native-drag-drop-grid-library';
 import Unsplash from 'unsplash-js';
 import Constants from 'expo-constants';
-import GameTimer from './GameTimer';
+import { Timer } from 'react-native-stopwatch-timer';
 import shake from '../assets/shake.png';
+import * as FileSystem from 'expo-file-system';
+import { AsyncStorage } from 'react-native';
+import { Accelerometer } from 'expo-sensors';
 
 const dimensions = Dimensions.get('window')
 const screenWidth = dimensions.width, screenHeight = dimensions.height
 const offset = screenWidth/3
 
 export default function GameScreen(props) {
-  const [gridItems, setGridItems] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8])
-  const [gameActive, setGameActive] = useState(true)
+  const shuffleArray = array => {
+    var currentIndex = array.length
+    var temporaryValue, randomIndex
+  
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex)
+      currentIndex--
+  
+      temporaryValue = array[currentIndex]
+      array[currentIndex] = array[randomIndex]
+      array[randomIndex] = temporaryValue
+    }
+  
+    return array
+  }
+
+  const [gridItems, setGridItems] = useState(shuffleArray([0, 2, 1, 3, 4, 5, 6, 7, 8]))
+  const [active, setActive] = useState(false)
+  const [timerStarted, setTimerStarted] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(30)
+  const [accData, setAccData] = useState({
+    data: null,
+    shake: false,
+    lastUpdate: Date.now(),
+    lastShake: Date.now(),
+  })
+
+  let highScore = 200
 
   const mTop = {
     0: 0,
@@ -38,70 +67,168 @@ export default function GameScreen(props) {
     8: -2,
   }
 
-  // my unsplash info, we have max 50 requests/hour
-  // const unsplash = new Unsplash({ accessKey: 'c840d6aaf8c9985c3969fbb9d53349c39e98a01e389124691e5450e6d02472d3' })
-  // unsplash API: https://github.com/unsplash/unsplash-js
+  useEffect(() => {
+    // subscribe to accelerometer data when the component mounts
 
-  // this is the photo i've been using to get it working, its url is below - just saving it so we don't have to send a request each time
-  // unsplash.photos.getPhoto("Xk0jQPZseMk")
-  // .then(resp => resp.json())
-  // .then(json => {
-  //   console.log(json)
-  // })
+    const accelListener = (aD) => {
+      let currTime = Date.now();
+      if (accData.data !== null && (currTime - accData.lastUpdate > 100)) {
+        let diffTime = (currTime - accData.lastUpdate);
 
-  // new image: https://images.unsplash.com/photo-1568486504489-9e70d75313b8?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb
+        let { x, y, z } = accData.data;
+        let speed = Math.abs(x + y + z - aD.x - aD.y - aD.z) / diffTime * 10000;
 
+        if (speed > 10) {
+          // we detected a shake
+          console.log('shakin the device')
+          console.log('before',gridItems)
+          if (Date.now() - accData.lastShake > 10000)
+            setAccData({
+              ...accData,
+              data: aD,
+              lastUpdate: Date.now(),
+              lastShake: Date.now(),
+            })
 
-  shuffleArray = array => {
-    var currentIndex = array.length
-    var temporaryValue, randomIndex
-  
-    while (0 !== currentIndex) {
-      randomIndex = Math.floor(Math.random() * currentIndex)
-      currentIndex--
-  
-      temporaryValue = array[currentIndex]
-      array[currentIndex] = array[randomIndex]
-      array[randomIndex] = temporaryValue
+            // rerender a random grid
+            setGridItems(shuffleArray(gridItems))
+            console.log('after',gridItems)
+        }
+        setAccData({
+          ...accData,
+          data: aD,
+          lastUpdate: currTime
+        })
+      }
+
+      setAccData({
+        ...accData,
+        data: aD
+      });
     }
-  
-    return array
-  }
+    Accelerometer.addListener(accelListener);
 
-  getGridItemsOrder = orderObj => {
+    // unsubscribe when the component unmounts
+    return () => {
+      Accelerometer.removeAllListeners();
+    }
+  })
+
+  const getGridItemsOrder = orderObj => {
     let order = orderObj['itemOrder'].map(item => item.key)
     // console.log(order)
     return order
   }
 
-  solved = () => {
+  const onTimerComplete = () => {
+    setActive(false)
+  }
+
+  const tick = time => {
+    if(time < timeLeft) {
+      setTimeLeft(time)
+    }
+  }
+
+  const tileRelease = itemOrder => {
+    const order = getGridItemsOrder(itemOrder)
+    setGridItems(order)
+    if(isSolved(order)) {
+      setActive(false)
+    }
+  }
+
+  const isSolved = order => {
     let same = true
-    gridItems.forEach((item, index) => {
+    order.forEach((item, index) => {
       if(item != index) same = false
     })
-    // if(same) setGameActive(false)
     return same
   }
 
-  // let arr = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8])
-  let arr = [1, 0, 2, 3, 4, 5, 6, 7, 8]
-
-  timerComplete = () => {
-    setGameActive(false)
+  const clickStart = () => {
+    setActive(true)
+    setTimerStarted(true)
   }
 
-  tick = time => {
-    if(!gameActive) console.log(time)
+  const getBottomHalf = () => {
+    if(!timerStarted) {
+      return (
+        <View style={styles.bottomContainer}>
+          <TouchableOpacity onPress={() => clickStart()} style={styles.startButton}>
+            <Text style={styles.startText}>Start Game</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
+    else if(timerStarted && active) {
+      return (
+        <View style={styles.bottomContainer}>
+          <Image source={shake} style={styles.shake}/>
+          <Text style={styles.shakeMessage}>Stuck? Shake your device to scramble the image.</Text>
+        </View>
+      )
+    }
+    else if(timerStarted && !active && timeLeft > 0) {
+      const score = timeLeft*100
+      let highScoreMsg = <Text style={styles.message2}>Your high score is still {highScore}.</Text>
+      if(score > highScore) {
+        highScoreMsg = <Text style={styles.message2}>New high score! {score}</Text>
+        highScore = score
+      }
+      return (
+        <View style={styles.bottomContainer}>
+          <Text style={styles.message1}>Nice!</Text>
+          <Text style={styles.message2}>{timeLeft} x 100 = {score}</Text>
+          {highScoreMsg}
+        </View>
+      )
+    }
+    return (
+      <View style={styles.bottomContainer}>
+        <Text style={styles.message1}>Oof.</Text>
+        <Text style={styles.message2}>0.0 x 100 = 0</Text>
+        <Text style={styles.message2}>Your high score is still {highScore}.</Text>
+      </View>
+    )
   }
+
+  const getOpacity = () => {
+    if(timerStarted && !active && timeLeft > 0) return 0.5
+    else if(timerStarted && active) return 1
+    return 0.1
+  }
+
+  const options = {
+    container: {
+      width: 170,
+    },
+    text: {
+      fontSize: 48,
+      color: '#855AFF',
+      textAlign: 'center',
+      fontFamily: 'ArialRoundedMTBold',
+    }
+  }
+
+  console.disableYellowBox = true
 
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <GameTimer active={gameActive && !solved()} onTick={tick} onTimerComplete={timerComplete}/>
+        {timerStarted && !active && timeLeft > 0 ?
+          <Text style={styles.timeText}>{timeLeft}</Text>
+          :
+          <Timer
+          start={active}
+          totalDuration={30000}
+          getTime={time => tick(time)}
+          handleFinish={()=>onTimerComplete()}
+          options={options}/>
+        }
       </View>
-      {gameActive ?
       <DragDropGrid
-        style={styles.grid}
+        style={[styles.grid, {opacity: getOpacity()}]}
         ref={sortGrid => {
           this.sortGrid = sortGrid
         }}
@@ -109,27 +236,19 @@ export default function GameScreen(props) {
         activeBlockCenteringDuration={200}
         itemsPerRow={3}
         dragActivationTreshold={10}
-        onDragRelease={(itemOrder) => {setGridItems(getGridItemsOrder(itemOrder))}}   
+        onDragRelease={(itemOrder) => {tileRelease(itemOrder)}}
         onDragStart={(key) => {}}>
           {
-            arr.map((val, index) => {
+            gridItems.map((val, index) => {
               return (
-                <View key={val} style={[styles.block, , solved() && gameActive ? {borderColor: 'green'} : {borderColor: '#fff'}]}>
+                <View key={val} style={styles.block}>
                   <Image style={[styles.photo, {marginTop: mTop[val]*offset, marginLeft: mLeft[val]*offset}]} source={require('../assets/strawberries.jpeg')}/>
                 </View>
               )
-            }
-            )
+            })
           }
       </DragDropGrid>
-      :
-      <Text style={{fontSize: 40}}>No active game</Text>
-      }
-      <View style={styles.bottomContainer}>
-        <Button style={styles.start} disabled={gameActive} title='Start game' onPress={() => setGameActive(true)}/>
-        <Image source={shake} style={styles.shake}/>
-        <Text style={styles.shakeMessage}>Stuck? Shake your device to scramble the image.</Text>
-      </View>
+      {getBottomHalf()}
     </View>
   )
 }
@@ -139,9 +258,9 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     flexDirection: 'column',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#E9E9E9',
+    backgroundColor: '#fff',
   },
   textContainer: {
     width: '100%',
@@ -150,18 +269,17 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   grid: {
     width: '100%',
     height: '100%',
-    marginTop: '10%',
   },
   block: {
     width: '100%',
     height: '100%',
     overflow: 'hidden',
     borderWidth: 2,
+    borderColor: '#fff',
   },
   photo: {
     width: screenWidth,
@@ -169,12 +287,10 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     width: '100%',
-    height: 300,
+    height: 370,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  start: {
   },
   shake: {
     width: 64,
@@ -186,6 +302,37 @@ const styles = StyleSheet.create({
     fontSize: 18,
     width: 240,
     textAlign: 'center',
-    marginTop: 10
+    marginTop: 10,
+    fontFamily: 'ArialRoundedMTBold',
+  },
+  timeText: {
+    fontSize: 48,
+    color: 'green',
+    fontFamily: 'ArialRoundedMTBold',
+  },
+  startButton: {
+    width: 300,
+    alignItems: "center",
+    paddingVertical: 15,
+    marginVertical: 10,
+    backgroundColor: "#855AFF",
+    borderRadius: 20,
+  },
+  startText: {
+    fontFamily: "ArialRoundedMTBold",
+    color: "#fff",
+    fontSize: 18,
+  },
+  message1: {
+    fontSize: 32,
+    color: '#574980',
+    fontFamily: 'ArialRoundedMTBold',
+    marginBottom:10,
+  },
+  message2: {
+    fontSize: 24,
+    color: '#574980',
+    fontFamily: 'ArialRoundedMTBold',
+    marginBottom:10,
   }
 })

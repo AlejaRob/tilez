@@ -8,7 +8,6 @@ import Constants from 'expo-constants';
 
 
 export default function HomeScreen(props) {
-  // const [gridItems, setGridItems] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9])
   const id = props.navigation.state.params.id;
 
   return (
