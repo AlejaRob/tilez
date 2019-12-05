@@ -195,12 +195,13 @@ export default function GameScreen(props) {
       )
     }
     else if(timerStarted && !active && timeLeft > 0) {
+      console.log('here');
       const score = timeLeft*100
       checkHighScore(score);
       let highScoreMsg = <Text style={styles.message2}>Your high score is still {highScore}.</Text>
       if(score > highScore) {
         highScoreMsg = <Text style={styles.message2}>New high score! {score}00</Text>
-        setHighScore(score);
+        // setHighScore(score);
       }
       return (
         <View style={styles.bottomContainer}>
