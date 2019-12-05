@@ -80,7 +80,7 @@ export default function GameScreen(props) {
       } catch(e) {
         console.log(e);
       }
-    });
+    })();
     const accelListener = (aD) => {
       let currTime = Date.now();
       if (accData.data !== null && (currTime - accData.lastUpdate > 100)) {
@@ -89,7 +89,7 @@ export default function GameScreen(props) {
         let { x, y, z } = accData.data;
         let speed = Math.abs(x + y + z - aD.x - aD.y - aD.z) / diffTime * 10000;
 
-        if (speed > 10) {
+        if (speed > 75) {
           // we detected a shake
           console.log('shakin the device')
           console.log('before',gridItems)
@@ -147,6 +147,7 @@ export default function GameScreen(props) {
 
   const onTimerComplete = () => {
     setActive(false)
+    setTimeLeft(0);
   }
 
   const tick = time => {
@@ -200,8 +201,7 @@ export default function GameScreen(props) {
       checkHighScore(score);
       let highScoreMsg = <Text style={styles.message2}>Your high score is still {highScore}.</Text>
       if(score > highScore) {
-        highScoreMsg = <Text style={styles.message2}>New high score! {score}00</Text>
-        // setHighScore(score);
+        highScoreMsg = <Text style={styles.message2}>New high score! {score}</Text>
       }
       return (
         <View style={styles.bottomContainer}>
