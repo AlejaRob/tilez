@@ -40,14 +40,14 @@ export default function GameScreen(props) {
   const [active, setActive] = useState(false)
   const [timerStarted, setTimerStarted] = useState(false)
   const [timeLeft, setTimeLeft] = useState(30)
+  const [highScore, setHighScore] = useState(0);
+
   const [accData, setAccData] = useState({
     data: null,
     shake: false,
     lastUpdate: Date.now(),
     lastShake: Date.now(),
   })
-
-  let highScore = 200
 
   const mTop = {
     0: 0,
@@ -74,7 +74,13 @@ export default function GameScreen(props) {
 
   useEffect(() => {
     // subscribe to accelerometer data when the component mounts
-
+    (async () => {
+      try {
+        setHighScore(await AsyncStorage.getItem('highScore-' + name));
+      } catch(e) {
+        console.log(e);
+      }
+    });
     const accelListener = (aD) => {
       let currTime = Date.now();
       if (accData.data !== null && (currTime - accData.lastUpdate > 100)) {
@@ -96,7 +102,8 @@ export default function GameScreen(props) {
             })
 
             // rerender a random grid
-            setGridItems(shuffleArray(gridItems))
+            // setGridItems(shuffleArray(gridItems))
+            props.navigation.navigate('HomeScreen');
             console.log('after',gridItems)
         }
         setAccData({
@@ -123,7 +130,9 @@ export default function GameScreen(props) {
     try {
       const value = await AsyncStorage.getItem('highScore-' + name);
         if (value !== null && value < score) {
-          await AsyncStorage.setItem('highScore-' + name, score);
+          await AsyncStorage.setItem('highScore-' + name, score.toString());
+        } else if (value === null) {
+          await AsyncStorage.setItem('highScore-', + name, score.toString());
         }
     } catch (error) {
       // Error saving data
@@ -181,7 +190,7 @@ export default function GameScreen(props) {
       return (
         <View style={styles.bottomContainer}>
           <Image source={shake} style={styles.shake}/>
-          <Text style={styles.shakeMessage}>Stuck? Shake your device to scramble the image.</Text>
+          <Text style={styles.shakeMessage}>Stuck? Shake your device to quit the game.</Text>
         </View>
       )
     }
@@ -190,8 +199,8 @@ export default function GameScreen(props) {
       checkHighScore(score);
       let highScoreMsg = <Text style={styles.message2}>Your high score is still {highScore}.</Text>
       if(score > highScore) {
-        highScoreMsg = <Text style={styles.message2}>New high score! {score}</Text>
-        highScore = score
+        highScoreMsg = <Text style={styles.message2}>New high score! {score}00</Text>
+        setHighScore(score);
       }
       return (
         <View style={styles.bottomContainer}>

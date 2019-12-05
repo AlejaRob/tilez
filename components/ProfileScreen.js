@@ -12,11 +12,13 @@ export default function ProfileScreen(props) {
 
     // state var to hold the profilePic URI
     const [profilePic, setProfilePic] = useState(null);
-    let highScore = 0;
+    const [highScore, setHighScore] = useState(0);
 
     // try to grab the picture when the component mounts
     useEffect(() => {
+        
         (async () => {
+            await retrieveData()
             try {
                 const picInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'profile/' + name + '-profile-pic.jpg');
                 if (picInfo.exists) {
@@ -33,16 +35,18 @@ export default function ProfileScreen(props) {
         })()
     })
 
-    retrieveData = async () => {
+    const retrieveData = async () => {
         try {
           const value = await AsyncStorage.getItem('highScore-' + name);
           if (value !== null) {
             // We have data!!
-            highScore = value;
+            setHighScore(value);
             console.log(value);
+          } else {
+            await AsyncStorage.setItem('highScore-' + name, '0');
           }
         } catch (error) {
-          // Error retrieving data
+            console.log(error);
         }
     };
 
