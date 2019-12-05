@@ -315,8 +315,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 320,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
+    marginBottom: 15,
   },
   shake: {
     width: 64,
