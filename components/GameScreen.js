@@ -196,18 +196,14 @@ export default function GameScreen(props) {
       )
     }
     else if(timerStarted && !active && timeLeft > 0) {
-      console.log('here');
       const score = timeLeft*100
-      checkHighScore(score);
-      let highScoreMsg = <Text style={styles.message2}>Your high score is still {highScore}.</Text>
-      if(score > highScore) {
-        highScoreMsg = <Text style={styles.message2}>New high score! {score}</Text>
-      }
+      checkHighScore(score)
+
       return (
         <View style={styles.bottomContainer}>
           <Text style={styles.message1}>Nice!</Text>
           <Text style={styles.message2}>{timeLeft} x 100 = {score}</Text>
-          {highScoreMsg}
+          <Text style={styles.message2}>Your high score is {highScore}.</Text>
         </View>
       )
     }
@@ -215,7 +211,7 @@ export default function GameScreen(props) {
       <View style={styles.bottomContainer}>
         <Text style={styles.message1}>Oof.</Text>
         <Text style={styles.message2}>0.0 x 100 = 0</Text>
-        <Text style={styles.message2}>Your high score is still {highScore}.</Text>
+        <Text style={styles.message2}>Your high score is {highScore}.</Text>
       </View>
     )
   }
@@ -314,7 +310,8 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     width: '100%',
-    height: 320,
+    height: 200, // little phones
+    // height: 380, // big phones
     flexDirection: 'column',
     justifyContent: 'flex-end',
     alignItems: 'center',
